@@ -1,6 +1,6 @@
 # store-and-forward workflow
 
-#### Initial Setup on Amazon:
+#### Initial setup on Amazon:
   - The image we are testing with currently is a m4.xlarge
   - The disk where work is done **must be encrypted**:
       - when launching the instance, add a volume and ensure "Encrypted" is selected
@@ -40,7 +40,7 @@ https://github.com/CancerCollaboratory/cli
 
 A pem key is provided to allow the worker access to this Git repo.
 A KeyStore is provided for access to the CLI.
-Get these from the S2 bucket:
+Get these from the S3 bucket:
 
 Install s3cmd and configure with your credentials (interactive).
 ```
@@ -55,10 +55,10 @@ mkdir /home/ubuntu/.gnos/
 tar xvf store-and-forward.tar
 mv /home/ubuntu/store-and-forward/* /home/ubuntu/.gnos/
 ```
-Save your gnos pem key in /home/ubuntu/.gnos/gnos.pem
+Copy your gnos pem key to `/home/ubuntu/.gnos/gnos.pem`
 
 
-#### Get the store_and_forward workflow
+#### Get the store-and-forward workflow
 ```
 sudo apt-get install openjdk-7-jre-headless
 
@@ -78,7 +78,7 @@ docker run -h master -it -v /var/run/docker.sock:/var/run/docker.sock -v /home/u
 ###### Prepare an .ini file for the workflow
 Get a copy of `template.ini` found at https://github.com/ICGC-TCGA-PanCancer/s3-transfer-operations/blob/master/scripts/template.ini and modify the field `collabToken` with the access token that Vitalii provided to you.
 
-Generate an .ini file using `json2ini.py` found at https://github.com/ICGC-TCGA-PanCancer/s3-transfer-operations/blob/master/scripts/json2ini.py
+Generate the .ini file using `json2ini.py` found at https://github.com/ICGC-TCGA-PanCancer/s3-transfer-operations/blob/master/scripts/json2ini.py
 The script requires pystache:
 ```
  sudo apt-get install python-pip
