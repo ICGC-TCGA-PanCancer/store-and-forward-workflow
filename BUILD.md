@@ -4,13 +4,16 @@ Instructions to setup a build environment for this workflow.
 
 ## How To Setup your Environment
   - Setup a fresh Ubuntu 14.04 image based machine in the environment of your choice.
+
   - Install the following packages:<br>
     ```sudo apt-get install openjdk-7-jdk maven```<br>
+
   - Install docker:<br>
     ```curl -sSL https://get.docker.com/ | sudo sh```<br>
     ```sudo usermod -aG docker ubuntu```<br>
     ```# log out then back in!```<br>
-    ```exit```<br><br>
+    ```exit```<br>
+
   - Clone the git repo:<br>
     ```mkdir ~/gitroot && cd ~/gitroot && git clone https://github.com/ICGC-TCGA-PanCancer/store-and-forward-workflow.git```<br>
 
