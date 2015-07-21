@@ -12,7 +12,7 @@ Instructions to setup a build environment for this workflow.
     ```# log out then back in!```<br>
     ```exit```<br>
   - Clone the git repo:<br>
-    ```mkdir ~/gitroot && cd ~/gitroot && git clone https://github.com/ICGC-TCGA-PanCancer/store-and-forward-workflow.git```
+    ```mkdir ~/gitroot && cd ~/gitroot && git clone https://github.com/ICGC-TCGA-PanCancer/store-and-forward-workflow.git```<br>
 
 ## Building the Workflow
     ```cd /home/ubuntu/gitroot/store-and-forward-workflow```<br>
