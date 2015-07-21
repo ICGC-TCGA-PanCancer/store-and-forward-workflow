@@ -86,5 +86,6 @@ The script requires pystache:
 ```
 
 ###### Choose a job to test run
-Select a .json file from from /home/ubuntu/git-repos/s3-transfer-operations/testing/queued-jobs and use the script `json2ini.py` found at https://github.com/ICGC-TCGA-PanCancer/s3-transfer-operations/blob/master/scripts/json2ini.py then run:
+Select a .json file from https://github.com/ICGC-TCGA-PanCancer/s3-transfer-operations/tree/master/testing/queued-jobs
+and use the script `json2ini.py` found at https://github.com/ICGC-TCGA-PanCancer/s3-transfer-operations/blob/master/scripts/json2ini.py then run:
 `python json2ini.py [input json file] [template file] [output folder]`
