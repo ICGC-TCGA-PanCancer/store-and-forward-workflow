@@ -1,6 +1,6 @@
 # Building the Workflow
 
-To build the store-and-forward-workflow, you'll need to setup a development environment.
+Instructions to setup a build environment for this workflow.
 
 ## Dependencies
   You'll need to do the following to get your environment setup:  
