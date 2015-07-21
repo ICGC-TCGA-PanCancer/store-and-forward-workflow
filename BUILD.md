@@ -2,7 +2,7 @@
 
 Instructions to setup a build environment for this workflow.
 
-## Dependencies
+## How To Guide
   - Setup a fresh Ubuntu 14.04 image based machine in the environment of your choice.
   - Install the following packages:<br>
     ```sudo apt-get install openjdk-7-jdk maven```<br>
