@@ -3,6 +3,7 @@
 Instructions to setup a build environment for this workflow.
 
 ## How To Setup your Environment
+
   - Setup a fresh Ubuntu 14.04 image based machine in the environment of your choice.
 
   - Install the following packages:<br>
@@ -19,6 +20,7 @@ Instructions to setup a build environment for this workflow.
     ```it clone https://github.com/ICGC-TCGA-PanCancer/store-and-forward-workflow.git```<br>
 
 ## Building the Workflow
+
     ```cd /home/ubuntu/gitroot/store-and-forward-workflow```<br>
     ```mvn clean install```<br>
 
