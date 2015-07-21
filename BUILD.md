@@ -7,7 +7,7 @@ Instructions to setup a build environment for this workflow.
   - Install the following packages:<br>
     ```sudo apt-get install openjdk-7-jdk maven```<br>
   - Install docker:<br>
-    ```curl -sSL https://get.docker.com/ | sudo sh```
-    ```sudo usermod -aG docker ubuntu```
-    ```# log out then back in!```
-    ```exit```
+    ```curl -sSL https://get.docker.com/ | sudo sh```<br>
+    ```sudo usermod -aG docker ubuntu```<br>
+    ```# log out then back in!```<br>
+    ```exit```<br>
