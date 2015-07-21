@@ -25,13 +25,14 @@ Instructions to setup a build environment for this workflow.
     mvn clean install
 
 ## Zipping up the workflow bundle
-  - Mount the seqware whitestar docker container with the home folder in the same location
-    ```docker run -h master -it -v /home/ubuntu/:/home/ubuntu/ seqware/seqware_whitestar_pancancer:1.1.1 bash```
-    INSIDE THE CONTAINER:
-    ```cd /home/ubuntu/gitroot/store-and-forward-workflow```
-    ```seqware bundle package --dir target/Workflow_Bundle_StoreAndForward_1.0.2_SeqWare_1.1.0```
-    ```exit```
-    OUTSIDE THE CONTAINER:
-    ```cd /home/ubuntu/gitroot/store-and-forward-workflow```
-    ```s3cmd put Workflow_Bundle_StoreAndForward_1.0.2_SeqWare_1.1.0.zip s3://oicr.workflow.bundles/released-bundles```
+
+  - Mount the seqware whitestar docker container with the home folder in the same location<br>
+    ```docker run -h master -it -v /home/ubuntu/:/home/ubuntu/ seqware/seqware_whitestar_pancancer:1.1.1 bash```<br>
+    INSIDE THE CONTAINER:<br>
+    ```cd /home/ubuntu/gitroot/store-and-forward-workflow```<br>
+    ```seqware bundle package --dir target/Workflow_Bundle_StoreAndForward_1.0.2_SeqWare_1.1.0```<br>
+    ```exit```<br>
+    OUTSIDE THE CONTAINER:<br>
+    ```cd /home/ubuntu/gitroot/store-and-forward-workflow```<br>
+    ```s3cmd put Workflow_Bundle_StoreAndForward_1.0.2_SeqWare_1.1.0.zip s3://oicr.workflow.bundles/released-bundles```<br>
     
