@@ -11,7 +11,7 @@ Instructions to setup a build environment for this workflow.
   - Install docker:<br>
     ```curl -sSL https://get.docker.com/ | sudo sh```<br>
     ```sudo usermod -aG docker ubuntu```<br>
-    ```# log out then back in!```<br>
+
     ```exit```<br>
 
   - Clone the git repo:<br>
