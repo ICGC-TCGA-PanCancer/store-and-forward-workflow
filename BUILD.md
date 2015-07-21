@@ -21,8 +21,8 @@ Instructions to setup a build environment for this workflow.
 
 ## Building the Workflow
 
-    ```cd /home/ubuntu/gitroot/store-and-forward-workflow```<br>
-    ```mvn clean install```<br>
+    cd /home/ubuntu/gitroot/store-and-forward-workflow
+    mvn clean install
 
 ## Zipping up the workflow bundle
     ```docker run -h master -it -v /var/run/docker.sock:/var/run/docker.sock -v /home/ubuntu/gitroot:/workflows seqware/seqware_whitestar_pancancer:1.1.1 bash -c "seqware bundle package --dir /workflows/store-and-forward-workflow/target/Workflow_Bundle_StoreAndForward_1.0.2_SeqWare_1.1.0 --to /workflows "```
