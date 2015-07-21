@@ -13,7 +13,6 @@ Instructions to setup a build environment for this workflow.
     ```sudo usermod -aG docker ubuntu```<br>
     ```# log out then back in!```<br>
 
-
   - Clone the git repo:<br>
     ```mkdir ~/gitroot```<br>
     ```cd ~/gitroot```<br>
