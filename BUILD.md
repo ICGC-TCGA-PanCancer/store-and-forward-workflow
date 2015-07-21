@@ -17,7 +17,7 @@ Instructions to setup a build environment for this workflow.
   - Clone the git repo:<br>
     ```mkdir ~/gitroot```<br>
     ```cd ~/gitroot```<br>
-    ```it clone https://github.com/ICGC-TCGA-PanCancer/store-and-forward-workflow.git```<br>
+    ```git clone https://github.com/ICGC-TCGA-PanCancer/store-and-forward-workflow.git```<br>
 
 ## Building the Workflow
 
