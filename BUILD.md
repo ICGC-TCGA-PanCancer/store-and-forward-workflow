@@ -10,7 +10,7 @@ Instructions to setup a build environment for this workflow.
     ```curl -sSL https://get.docker.com/ | sudo sh```<br>
     ```sudo usermod -aG docker ubuntu```<br>
     ```# log out then back in!```<br>
-    ```exit```<br>
+    ```exit```<br><br>
   - Clone the git repo:<br>
     ```mkdir ~/gitroot && cd ~/gitroot && git clone https://github.com/ICGC-TCGA-PanCancer/store-and-forward-workflow.git```<br>
 
