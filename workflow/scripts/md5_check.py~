@@ -19,6 +19,10 @@ def main(url, md5):
     hasher.update(data)
     myhash=hasher.hexdigest()
 
+    # Store the patched xml, for filing by the workflow
+    with open("patched.xml","w") as f:
+	f.write(data)
+
     if md5 != myhash:
 	print "ERROR: The xml data downloaded from %s does not match the pregenerated data!" % sys.argv[1]
 	print >> sys.stderr, "ERROR: The xml data downloaded from %s does not match the pregenerated data!" % sys.argv[1]
