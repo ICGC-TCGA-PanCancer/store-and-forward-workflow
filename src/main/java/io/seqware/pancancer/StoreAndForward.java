@@ -198,7 +198,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     	manageGit.getCommand().addArgument("if [[ ! -d " + dst + " ]]; then mkdir " + dst + "; fi \n");
     	manageGit.getCommand().addArgument("if [[ -d " + src + " ]]; then git mv " + path + "/" + src + "/" + this.JSONfileName + " " + path + "/" + dst + "; fi \n");
     	manageGit.getCommand().addArgument("git stage . \n");
-    	manageGit.getCommand().addArgument("git commit -m '" + this.gnosServer + "' \n");
+    	manageGit.getCommand().addArgument("git commit -m '" + dst + ": " + this.JSONfileName +"' \n");
     	manageGit.getCommand().addArgument("git push \n");
     	manageGit.addParent(lastJob);
     	return(manageGit);
@@ -245,6 +245,8 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
 	  int index = 0;
 	  GNOSjob.getCommand().addArgument("date +%s > ../download_timing.txt \n");
 	  for (String url : this.downloadUrls) {
+		  GNOSjob.getCommand().addArgument("python " + this.getWorkflowBaseDir() + "/scripts/md5_check.py " + this.downloadMetadataUrls.get(index) + " " + this.JSONxmlHash + " \n");
+		  GNOSjob.getCommand().addArgument("mv patched.xml " + this.analysisIds.get(index) + ".xml \n");
 		  GNOSjob.getCommand().addArgument("echo '" + url + "' > individual_download_timing.txt \n");
 		  GNOSjob.getCommand().addArgument("date +%s > individual_download_timing.txt \n");
 		  GNOSjob.getCommand().addArgument("sudo docker run "
@@ -304,7 +306,6 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     	int index = 0;
     	for (String url : this.downloadMetadataUrls) {
     		verifyJob.getCommand().addArgument("python " + this.getWorkflowBaseDir() + "/scripts/download_check.py " + url + " " + this.JSONxmlHash + " \n");
-    		verifyJob.getCommand().addArgument("mv patched.xml " + this.analysisIds.get(index) + ".xml \n");
     		verifyJob.getCommand().addArgument("mv "
   				  + this.analysisIds.get(index) + ".xml "
   				  + this.analysisIds.get(index) + " \n");
