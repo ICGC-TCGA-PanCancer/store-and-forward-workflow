@@ -247,10 +247,11 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
 	  for (String url : this.downloadUrls) {
 		  // Add GNOS tag for download
 		  String server = this.gnosServer.replace("http://", "");
+		  server = server.replace("https://", "");
 		  server = server.replace("/", "");
 		  server = server.replace("gtrepo-", "");
 		  server = server.replace(".", "-");
-		  GNOSjob.getCommand().addArgument("echo -n \"" + server + "\" > /datastore/gnos_id.txt");
+		  GNOSjob.getCommand().addArgument("echo -n \"" + server + "\" > /datastore/gnos_id.txt \n");
 		  GNOSjob.getCommand().addArgument("python " + this.getWorkflowBaseDir() + "/scripts/md5_check.py " + this.downloadMetadataUrls.get(index) + " " + this.JSONxmlHash + " \n");
 		  GNOSjob.getCommand().addArgument("mv patched.xml " + this.analysisIds.get(index) + ".xml \n");
 		  GNOSjob.getCommand().addArgument("echo '" + url + "' > individual_download_timing.txt \n");
