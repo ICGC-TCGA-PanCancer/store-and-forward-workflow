@@ -50,13 +50,14 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     private String s3SecretKey = null;
     private String uploadS3Bucket = null;
     private String uploadTimeout = null;
-    // JSON repo
+    // JSON Configuration
     private String JSONrepo = null;
     private String JSONlocation = "/datastore/gitroot";
     private String JSONrepoName = "s3-transfer-operations";
     private String JSONfolderName = null;
     private String JSONfileName = null;
     private String JSONxmlHash = null;
+    // Gnos Configuration
     private String GITemail = "nbyrne.oicr@gmail.com";
     private String GITname = "ICGC AUTOMATION";
     private String GITPemFile = null;
@@ -64,9 +65,11 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     private String collabToken = null;
     private String collabCertPath = null;
     private String collabHost = null;
+    // Docker Config
+    private String gnosDockerName = null;
     // workflows to run
     // docker names
-    private String gnosDownloadName = "seqware/pancancer_upload_download";
+    private String gnosDownloadName = "pancancer/pancancer_upload_download";
     
     @Override
     public void setupWorkflow() {
@@ -92,12 +95,15 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
             	this.downloadMetadataUrls.add(downloadMetadataURLBuilder.toString());
             }
             
-            // Collab Token
+            // Collab
             this.collabToken = getProperty("collabToken");
             this.collabCertPath = getProperty("collabCertPath");
             this.collabHost = getProperty("collabHost");
             
-            // Elasticsearch Git Repo
+            // Docker Config
+            this.gnosDockerName = getProperty("gnosDockerName");
+            
+            // JSON Git Repo
             this.JSONrepo = getProperty("JSONrepo");
             this.JSONfolderName = getProperty("JSONfolderName");
             this.JSONfileName = getProperty("JSONfileName");
