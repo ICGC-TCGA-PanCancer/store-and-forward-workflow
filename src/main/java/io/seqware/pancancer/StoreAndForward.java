@@ -50,13 +50,14 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     private String s3SecretKey = null;
     private String uploadS3Bucket = null;
     private String uploadTimeout = null;
-    // JSON repo
+    // JSON Configuration
     private String JSONrepo = null;
     private String JSONlocation = "/datastore/gitroot";
     private String JSONrepoName = "s3-transfer-operations";
     private String JSONfolderName = null;
     private String JSONfileName = null;
     private String JSONxmlHash = null;
+    // Gnos Configuration
     private String GITemail = "nbyrne.oicr@gmail.com";
     private String GITname = "ICGC AUTOMATION";
     private String GITPemFile = null;
@@ -64,9 +65,11 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     private String collabToken = null;
     private String collabCertPath = null;
     private String collabHost = null;
+    // Docker Config
+    private String gnosDockerName = null;
     // workflows to run
     // docker names
-    private String gnosDownloadName = "seqware/pancancer_upload_download";
+    private String gnosDownloadName = "pancancer/pancancer_upload_download";
     
     @Override
     public void setupWorkflow() {
@@ -92,12 +95,15 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
             	this.downloadMetadataUrls.add(downloadMetadataURLBuilder.toString());
             }
             
-            // Collab Token
+            // Collab
             this.collabToken = getProperty("collabToken");
             this.collabCertPath = getProperty("collabCertPath");
             this.collabHost = getProperty("collabHost");
             
-            // Elasticsearch Git Repo
+            // Docker Config
+            this.gnosDockerName = getProperty("gnosDockerName");
+            
+            // JSON Git Repo
             this.JSONrepo = getProperty("JSONrepo");
             this.JSONfolderName = getProperty("JSONfolderName");
             this.JSONfileName = getProperty("JSONfileName");
@@ -198,7 +204,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     	manageGit.getCommand().addArgument("if [[ ! -d " + dst + " ]]; then mkdir " + dst + "; fi \n");
     	manageGit.getCommand().addArgument("if [[ -d " + src + " ]]; then git mv " + path + "/" + src + "/" + this.JSONfileName + " " + path + "/" + dst + "; fi \n");
     	manageGit.getCommand().addArgument("git stage . \n");
-    	manageGit.getCommand().addArgument("git commit -m '" + this.gnosServer + "' \n");
+    	manageGit.getCommand().addArgument("git commit -m '" + dst + ": " + this.JSONfileName +"' \n");
     	manageGit.getCommand().addArgument("git push \n");
     	manageGit.addParent(lastJob);
     	return(manageGit);
@@ -245,6 +251,15 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
 	  int index = 0;
 	  GNOSjob.getCommand().addArgument("date +%s > ../download_timing.txt \n");
 	  for (String url : this.downloadUrls) {
+		  // Add GNOS tag for download
+		  String server = this.gnosServer.replace("http://", "");
+		  server = server.replace("https://", "");
+		  server = server.replace("/", "");
+		  server = server.replace("gtrepo-", "");
+		  server = server.replace(".", "-");
+		  GNOSjob.getCommand().addArgument("echo -n \"" + server + "\" > /datastore/gnos_id.txt \n");
+		  GNOSjob.getCommand().addArgument("python " + this.getWorkflowBaseDir() + "/scripts/md5_check.py " + this.downloadMetadataUrls.get(index) + " " + this.JSONxmlHash + " \n");
+		  GNOSjob.getCommand().addArgument("mv patched.xml " + this.analysisIds.get(index) + ".xml \n");
 		  GNOSjob.getCommand().addArgument("echo '" + url + "' > individual_download_timing.txt \n");
 		  GNOSjob.getCommand().addArgument("date +%s > individual_download_timing.txt \n");
 		  GNOSjob.getCommand().addArgument("sudo docker run "
@@ -253,14 +268,14 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
 					      // link in the pem key
 					      + "-v "
 					      + this.pemFile
-					      + ":/root/gnos_icgc_keyfile.pem " + this.gnosDownloadName
+					      + ":/gnos_icgc_keyfile.pem " + this.gnosDownloadName
 					      // here is the Bash command to be run
-					      + " /bin/bash -c \"cd /workflow_data/ && perl -I /opt/gt-download-upload-wrapper/gt-download-upload-wrapper-2.0.10/lib "
-					      + "/opt/vcf-uploader/vcf-uploader-2.0.4/gnos_download_file.pl "
+					      + " /bin/bash -c \"cd /workflow_data/ && perl -I /opt/gt-download-upload-wrapper/gt-download-upload-wrapper-2.0.11/lib "
+					      + "/opt/vcf-uploader/vcf-uploader-2.0.5/gnos_download_file.pl "
 					      + "--url " + url + " . "
 					      + " --retries " + this.gnosRetries + " --timeout-min " + this.gnosTimeoutMin + " "
-					      + " --file /root/gnos_icgc_keyfile.pem "
-					      + " --pem /root/gnos_icgc_keyfile.pem\" \n");
+					      + " --file /gnos_icgc_keyfile.pem "
+					      + " --pem /gnos_icgc_keyfile.pem\" \n");
 		  GNOSjob.getCommand().addArgument("sudo chown -R seqware:seqware " + this.analysisIds.get(index) + " \n");
 		  GNOSjob.getCommand().addArgument("date +%s > individual_download_timing.txt \n");
 		  index += 1;
@@ -304,7 +319,6 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     	int index = 0;
     	for (String url : this.downloadMetadataUrls) {
     		verifyJob.getCommand().addArgument("python " + this.getWorkflowBaseDir() + "/scripts/download_check.py " + url + " " + this.JSONxmlHash + " \n");
-    		verifyJob.getCommand().addArgument("mv patched.xml " + this.analysisIds.get(index) + ".xml \n");
     		verifyJob.getCommand().addArgument("mv "
   				  + this.analysisIds.get(index) + ".xml "
   				  + this.analysisIds.get(index) + " \n");
