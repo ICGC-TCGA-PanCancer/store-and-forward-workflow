@@ -25,7 +25,6 @@ def main(url, md5):
 
     if md5 != myhash:
 	print "ERROR: The xml data downloaded from %s does not match the pregenerated data!" % sys.argv[1]
-	print "ERRPR: Expected %s, calculated %s" % (md5, myhash)
 	print >> sys.stderr, "ERROR: The xml data downloaded from %s does not match the pregenerated data!" % sys.argv[1]
 	sys.exit(1)
 
