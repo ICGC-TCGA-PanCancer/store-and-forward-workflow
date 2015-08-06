@@ -24,7 +24,7 @@ def main(uuid):
 	with open("%s.timing" % uuid,"w") as f:
 		iterable = list(data.keys())
 		sorted(iterable)
-		string = ""
+		string = "gnos-id,"
 		for i in iterable:
 			for tag in tags:
 				string += "%s-%s," % (i, tag)
