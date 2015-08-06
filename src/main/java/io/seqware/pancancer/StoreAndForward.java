@@ -67,6 +67,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     private String collabHost = null;
     // Docker Config
     private String gnosDockerName = null;
+    private String collabDockerName = null;
     // workflows to run
     // docker names
     private String gnosDownloadName = "pancancer/pancancer_upload_download";
@@ -102,6 +103,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
             
             // Docker Config
             this.gnosDockerName = getProperty("gnosDockerName");
+            this.collabDockerName = getProperty("collabDockerName");
             
             // JSON Git Repo
             this.JSONrepo = getProperty("JSONrepo");
@@ -331,8 +333,8 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     			  + "-e ACCESSTOKEN=" + this.collabToken + " "
     			  + "--net=\"host\" "
     			  + "-e CLIENT_STRICT_SSL=\"True\" "
-    			  + "-e CLIENT_UPLOAD_SERVICEHOSTNAME=" + this.collabHost + " "
-    			  + "icgc/cli bash -c \"/collab/upload.sh /collab/upload/" + this.analysisIds.get(index)+"\" \n"
+    			  + "-e CLIENT_UPLOAD_SERVICEHOSTNAME=" + this.collabHost + " " + this.collabDockerName
+    			  + " bash -c \"/collab/upload.sh /collab/upload/" + this.analysisIds.get(index)+"\" \n"
     			  );
     	  index += 1;
       }
