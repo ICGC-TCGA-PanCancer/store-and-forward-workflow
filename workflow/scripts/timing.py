@@ -22,10 +22,10 @@ def main(uuid):
 		delta[key] = float(timings[1]) - float(timings[0])
 
 	with open("download.size") as f:
-		download_size = f.read()
+		download_size = f.read().strip()
 
 	with open("upload.size") as f:
-		upload_size = f.read()
+		upload_size = f.read().strip()
 
 	with open("%s.timing" % uuid,"w") as f:
 		iterable = list(data.keys())
@@ -37,8 +37,8 @@ def main(uuid):
 		f.write(string + "download-size,upload-size,\n")
 		string = uuid + ","
 		for key in iterable:
-			string += "%s,%s,%s,%s,%s," % (start[key], stop[key], delta[key], download_size, upload_size)
-		f.write(string + "\n")
+			string += "%s,%s,%s," % (start[key], stop[key], delta[key])
+		f.write(string + "%s,%s,\n", download_size, upload_size)
 
 if __name__ == '__main__':
 	main(sys.argv[1])
