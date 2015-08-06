@@ -13,7 +13,7 @@ delta = {}
 
 def main(uuid):
 	for key, value in data.iteritems():
-		with open value as f:
+		with open(value) as f:
 			timings = f.readlines()
 		start[key] = float(timings[0])
 		stop[key] = float(timings[1])
