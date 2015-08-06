@@ -223,7 +223,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     	consolidateTiming.getCommand().addArgument("if [[ ! -d " + path + " ]]; then mkdir -p " + path + "; fi \n");
     	int index = 0;
     	for (String url : this.downloadUrls) {
-    		consolidateTiming.getCommand().addArgument("sharedpath=`pwd`");
+    		consolidateTiming.getCommand().addArgument("sharedpath=`pwd` \n");
 	    	consolidateTiming.getCommand().addArgument("python " + this.getWorkflowBaseDir() + "/scripts/timing.py " + this.analysisIds.get(index) +" \n");
 	    	consolidateTiming.getCommand().addArgument("cd " + path + " \n");
 	    	consolidateTiming.getCommand().addArgument("git checkout master \n");
