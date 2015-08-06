@@ -215,7 +215,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     	return(manageGit);
     }
     
-    private void gitTiming(Job lastJob) {
+    private Job gitTiming(Job lastJob) {
     	Job consolidateTiming = this.getWorkflow().createBashJob("git_timing");
     	consolidateTiming.getCommand().addArgument("cd " + SHARED_WORKSPACE + " \n");
     	String path = this.JSONlocation + "/" +  this.JSONrepoName + "/timing-information";
