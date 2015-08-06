@@ -38,7 +38,7 @@ def main(uuid):
 		string = uuid + ","
 		for key in iterable:
 			string += "%s,%s,%s," % (start[key], stop[key], delta[key])
-		f.write(string + "%s,%s,\n", download_size, upload_size)
+		f.write(string + "%s,%s,\n" % (download_size, upload_size))
 
 if __name__ == '__main__':
 	main(sys.argv[1])
