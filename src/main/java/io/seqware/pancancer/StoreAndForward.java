@@ -311,6 +311,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
 		  index += 1;
 	  }
 	  GNOSjob.getCommand().addArgument("date +%s >> ../download_timing.txt \n");
+	  GNOSjob.getCommand().addArgument("du -c . | grep total | awk '{ print $1 }' > ../download.size \n");
 	  GNOSjob.getCommand().addArgument("cd - \n");
 	  GNOSjob.addParent(getReferenceDataJob);
 	  return(GNOSjob);
@@ -339,6 +340,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     			  );
     	  index += 1;
       }
+      S3job.getCommand().addArgument("du -c . | grep total | awk '{ print $1 }' > ../upload.size \n");
       S3job.getCommand().addArgument("cd .. \n");
       S3job.getCommand().addArgument("date +%s >> upload_timing.txt \n");
       S3job.getCommand().addArgument("date +%s >> workflow_timing.txt \n");
