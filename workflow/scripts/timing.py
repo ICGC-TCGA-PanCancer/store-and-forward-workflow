@@ -7,7 +7,7 @@ data['download'] = "download_timing.txt"
 data['upload'] = "upload_timing.txt"
 data['workflow'] = "workflow_timing.txt"
 
-tags = ['start', 'stop', 'delta', 'size']
+tags = ['start', 'stop', 'delta']
 
 start = {}
 stop = {}
