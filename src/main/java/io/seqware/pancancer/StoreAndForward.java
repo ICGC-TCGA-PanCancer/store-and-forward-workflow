@@ -216,7 +216,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     private void gitTiming(Job lastJob) {
     	Job consolidateTiming = this.getWorkflow().createBashJob("git_timing");
     	consolidateTiming.getCommand().addArgument("cd " + SHARED_WORKSPACE + " \n");
-    	String path = this.JSONlocation + "/" +  this.JSONrepoName + "/timing-information");
+    	String path = this.JSONlocation + "/" +  this.JSONrepoName + "/timing-information";
     	String gitroot = this.JSONlocation + "/" +  this.JSONrepoName;
     	consolidateTiming.getCommand().addArgument("if [[ ! -d " + path + " ]]; then mkdir -p " + path + "; fi \n");
     	int index = 0;
