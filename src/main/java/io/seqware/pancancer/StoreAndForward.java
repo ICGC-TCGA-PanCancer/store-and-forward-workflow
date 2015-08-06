@@ -223,12 +223,13 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     	consolidateTiming.getCommand().addArgument("if [[ ! -d " + path + " ]]; then mkdir -p " + path + "; fi \n");
     	int index = 0;
     	for (String url : this.downloadUrls) {
+    		consolidateTiming.getCommand().addArgument("sharedpath=`pwd`");
 	    	consolidateTiming.getCommand().addArgument("python " + this.getWorkflowBaseDir() + "/scripts/timing.py " + this.analysisIds.get(index) +" \n");
 	    	consolidateTiming.getCommand().addArgument("cd " + path + " \n");
 	    	consolidateTiming.getCommand().addArgument("git checkout master \n");
 	    	consolidateTiming.getCommand().addArgument("git reset --hard origin/master \n");
 	    	consolidateTiming.getCommand().addArgument("git fetch --all \n");
-	    	consolidateTiming.getCommand().addArgument("mv " + SHARED_WORKSPACE + "/" + this.analysisIds.get(index) + ".timing " + path + "/" + this.JSONfileName + ".timing \n");
+	    	consolidateTiming.getCommand().addArgument("mv ${sharedpath}/" + this.analysisIds.get(index) + ".timing " + path + "/" + this.JSONfileName + ".timing \n");
 	    	consolidateTiming.getCommand().addArgument("git stage . \n");
 	    	consolidateTiming.getCommand().addArgument("git commit -m 'Timing for: " + this.analysisIds.get(index) + "' \n");
 	    	consolidateTiming.getCommand().addArgument("git push \n");
