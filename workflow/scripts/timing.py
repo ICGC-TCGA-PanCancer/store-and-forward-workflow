@@ -7,6 +7,8 @@ data['download'] = "download_timing.txt"
 data['upload'] = "upload_timing.txt"
 data['workflow'] = "workflow_timing.txt"
 
+tags = ['start', 'stop', 'delta']
+
 start = {}
 stop = {}
 delta = {}
@@ -22,7 +24,11 @@ def main(uuid):
 	with open("%s.timing" % uuid,"w") as f:
 		iterable = list(data.keys())
 		sorted(iterable)
-		f.write(",".join(iterable)+",\n")
+		string = ""
+		for i in iterable:
+			for tag in tags:
+				string += "%s-%s," % (i, tag)
+		f.write(string + "\n")
 		string = uuid + ","
 		for key in iterable:
 			string += "%s,%s,%s," % (start[key], stop[key], delta[key])
