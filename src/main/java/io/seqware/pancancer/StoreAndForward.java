@@ -180,8 +180,11 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
         // Move the JSON file to finished
         Job move2finished = gitMove(s3Upload, "uploading-jobs", "completed-jobs");
         
+        // Calculate Timing Information and Move into Git
+        Job timing = gitTiming(move2finished);
+        
         // now cleanup
-        cleanupWorkflow(move2finished);
+        cleanupWorkflow(timing);
         
     }
     
@@ -210,10 +213,32 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     	return(manageGit);
     }
     
+    private void gitTiming(Job lastJob) {
+    	Job consolidateTiming = this.getWorkflow().createBashJob("git_timing");
+    	consolidateTiming.getCommand().addArgument("cd " + SHARED_WORKSPACE + " \n");
+    	String path = this.JSONlocation + "/" +  this.JSONrepoName + "/timing-information");
+    	String gitroot = this.JSONlocation + "/" +  this.JSONrepoName;
+    	consolidateTiming.getCommand().addArgument("if [[ ! -d " + path + " ]]; then mkdir -p " + path + "; fi \n");
+    	int index = 0;
+    	for (String url : this.downloadUrls) {
+	    	consolidateTiming.getCommand().addArgument("python " + this.analysisIds.get(index) +" \n");
+	    	consolidateTiming.getCommand().addArgument("mv " + this.analysisIds.get(index) + ".timing " + path + "/" + this.JSONfileName + ".timing \n");
+	    	consolidateTiming.getCommand().addArgument("cd " + path + " \n");
+	    	consolidateTiming.getCommand().addArgument("git checkout master \n");
+	    	consolidateTiming.getCommand().addArgument("git reset --hard origin/master \n");
+	    	consolidateTiming.getCommand().addArgument("git fetch --all \n");
+	    	consolidateTiming.getCommand().addArgument("git stage . \n");
+	    	consolidateTiming.getCommand().addArgument("git commit -m 'Timing for: " + this.analysisIds.get(index) + "' \n");
+	    	consolidateTiming.getCommand().addArgument("git push \n");
+    	}
+    	consolidateTiming.addParent(lastJob);
+    	return(consolidateTiming);
+    }
+    
     private void cleanupWorkflow(Job lastJob) {
         if (cleanup) {
           Job cleanup = this.getWorkflow().createBashJob("cleanup");
-	  cleanup.getCommand().addArgument("cd " + SHARED_WORKSPACE + " \n");
+          cleanup.getCommand().addArgument("cd " + SHARED_WORKSPACE + " \n");
           cleanup.getCommand().addArgument("rm -rf downloads\\* \n");
           cleanup.addParent(lastJob);
         } 
@@ -223,6 +248,8 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
 		Job createSharedWorkSpaceJob = this.getWorkflow().createBashJob("create_dirs");
 		createSharedWorkSpaceJob.getCommand().addArgument("mkdir -m 0777 -p " + SHARED_WORKSPACE + " \n");
 		createSharedWorkSpaceJob.getCommand().addArgument("mkdir -m 0777 -p " + SHARED_WORKSPACE + "/downloads \n");
+		createSharedWorkSpaceJob.getCommand().addArgument("cd " + SHARED_WORKSPACE + " \n");
+		createSharedWorkSpaceJob.getCommand().addArgument("date +%s > workflow_timing.txt \n");
 		return(createSharedWorkSpaceJob);
     }
 
@@ -277,10 +304,10 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
 					      + " --file /gnos_icgc_keyfile.pem "
 					      + " --pem /gnos_icgc_keyfile.pem\" \n");
 		  GNOSjob.getCommand().addArgument("sudo chown -R seqware:seqware " + this.analysisIds.get(index) + " \n");
-		  GNOSjob.getCommand().addArgument("date +%s > individual_download_timing.txt \n");
+		  GNOSjob.getCommand().addArgument("date +%s >> individual_download_timing.txt \n");
 		  index += 1;
 	  }
-	  GNOSjob.getCommand().addArgument("date +%s > ../download_timing.txt \n");
+	  GNOSjob.getCommand().addArgument("date +%s >> ../download_timing.txt \n");
 	  GNOSjob.getCommand().addArgument("cd - \n");
 	  GNOSjob.addParent(getReferenceDataJob);
 	  return(GNOSjob);
@@ -309,6 +336,9 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     			  );
     	  index += 1;
       }
+      S3job.getCommand().addArgument("cd " + SHARED_WORKSPACE + " \n");
+      S3job.getCommand().addArgument("date +%s >> upload_timing.txt \n");
+      S3job.getCommand().addArgument("date +%s >> workflow_timing.txt \n");
       S3job.addParent(getReferenceDataJob);
       return(S3job);
     }
