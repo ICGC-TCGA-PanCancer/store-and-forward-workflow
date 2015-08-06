@@ -338,7 +338,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     			  );
     	  index += 1;
       }
-      S3job.getCommand().addArgument("cd " + SHARED_WORKSPACE + " \n");
+      S3job.getCommand().addArgument("cd .. \n");
       S3job.getCommand().addArgument("date +%s >> upload_timing.txt \n");
       S3job.getCommand().addArgument("date +%s >> workflow_timing.txt \n");
       S3job.addParent(getReferenceDataJob);
