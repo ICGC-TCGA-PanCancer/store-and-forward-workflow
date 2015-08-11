@@ -352,7 +352,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     			  + "--net=\"host\" " + this.collabDockerName
     			  + " bash -c \"s3cmd put /collab/upload/logs/* " + this.collabLogBucket + " --secret_key=" + this.collabLogSecret + " --access_key=" + this.collabLogKey + "\" \n"
     			  );
-    	  S3job.getCommand().addArgument("rm -rf logs \n");
+    	  S3job.getCommand().addArgument("sudo rm -rf logs \n");
     	  index += 1;
       }
       S3job.getCommand().addArgument("du -c . | grep total | awk '{ print $1 }' > ../upload.size \n");
