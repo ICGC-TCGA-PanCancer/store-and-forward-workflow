@@ -61,10 +61,15 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     private String GITemail = "nbyrne.oicr@gmail.com";
     private String GITname = "ICGC AUTOMATION";
     private String GITPemFile = null;
-    // Colabtool
+    // Collab Tool
     private String collabToken = null;
     private String collabCertPath = null;
     private String collabHost = null;
+    // Collab Tool Logging
+    private String collabLogKey = null;
+    private String collabLogSecret = null;
+    private String collabLogBucket = null;
+    
     // Docker Config
     private String gnosDockerName = null;
     private String collabDockerName = null;
@@ -100,6 +105,9 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
             this.collabToken = getProperty("collabToken");
             this.collabCertPath = getProperty("collabCertPath");
             this.collabHost = getProperty("collabHost");
+            this.collabLogBucket = getProperty("collabLogBucket");
+            this.collabLogKey = getProperty("collabLogKey");
+            this.collabLogSecret = getProperty("collabLogSecret");
             
             // Docker Config
             this.gnosDockerName = getProperty("gnosDockerName");
@@ -329,6 +337,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
       for (String url : this.downloadUrls) {
     	  // Execute the collab tool, mounting the downloads folder into /collab/upload
     	  String folder = analysisIds.get(index);
+    	  S3job.getCommand().addArgument("mkdir -m 0777 -p logs \n");
     	  S3job.getCommand().addArgument("docker run "
     			  + "-v `pwd`:/collab/upload "
     			  + "-v " + this.collabCertPath + ":/collab/storage/conf/client.jks "
@@ -336,8 +345,11 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     			  + "--net=\"host\" "
     			  + "-e CLIENT_STRICT_SSL=\"True\" "
     			  + "-e CLIENT_UPLOAD_SERVICEHOSTNAME=" + this.collabHost + " " + this.collabDockerName
-    			  + " bash -c \"/collab/upload.sh /collab/upload/" + this.analysisIds.get(index)+"\" \n"
+    			  + " bash -c \"/collab/upload.sh /collab/upload/" + this.analysisIds.get(index) + "\" \n"
     			  );
+    	  s3job.getCommand().addArgument("for x in logs/*; do mv $x \"logs/" + this.analysisIds.get(index) + "$(date +%s | tr -d '\n')_$(basename $x | tr -d '\n')\"; done;");
+    	  S3job.getCommand().addArgument("s3cmd put logs/* " + this.collabLogBucket + " --secret_key=" + this.collabLogSecret + " --access_key=" + this.collabLogKey + " \n");
+    	  S3job.getCommand().addArgument("rm -rf logs \n");
     	  index += 1;
       }
       S3job.getCommand().addArgument("du -c . | grep total | awk '{ print $1 }' > ../upload.size \n");
