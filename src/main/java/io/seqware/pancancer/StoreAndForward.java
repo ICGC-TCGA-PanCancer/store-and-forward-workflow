@@ -346,7 +346,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     			  + "-e CLIENT_UPLOAD_SERVICEHOSTNAME=" + this.collabHost + " " + this.collabDockerName
     			  + " bash -c \"/collab/upload.sh /collab/upload/" + this.analysisIds.get(index) + "\" \n"
     			  );
-    	  S3job.getCommand().addArgument("for x in logs/*; do mv $x \"logs/" + this.analysisIds.get(index) + "$(date +%s | tr -d '\\n')_$(basename $x | tr -d '\\n')\"; done \n");
+    	  S3job.getCommand().addArgument("for x in logs/*; do sudo mv $x \"logs/" + this.analysisIds.get(index) + "$(date +%s | tr -d '\\n')_$(basename $x | tr -d '\\n')\"; done \n");
     	  S3job.getCommand().addArgument("docker run "
     			  + "-v `pwd`:/collab/upload "
     			  + "--net=\"host\" " + this.collabDockerName
