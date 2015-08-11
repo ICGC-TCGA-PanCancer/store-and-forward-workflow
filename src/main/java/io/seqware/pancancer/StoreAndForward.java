@@ -337,7 +337,6 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
       for (String url : this.downloadUrls) {
     	  // Execute the collab tool, mounting the downloads folder into /collab/upload
     	  String folder = analysisIds.get(index);
-    	  S3job.getCommand().addArgument("mkdir -m 0777 -p logs \n");
     	  S3job.getCommand().addArgument("docker run "
     			  + "-v `pwd`:/collab/upload "
     			  + "-v " + this.collabCertPath + ":/collab/storage/conf/client.jks "
@@ -347,8 +346,13 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     			  + "-e CLIENT_UPLOAD_SERVICEHOSTNAME=" + this.collabHost + " " + this.collabDockerName
     			  + " bash -c \"/collab/upload.sh /collab/upload/" + this.analysisIds.get(index) + "\" \n"
     			  );
-    	  S3job.getCommand().addArgument("for x in logs/*; do mv $x \"logs/" + this.analysisIds.get(index) + "$(date +%s | tr -d '\\n')_$(basename $x | tr -d '\\n')\"; done;");
-    	  S3job.getCommand().addArgument("s3cmd put logs/* " + this.collabLogBucket + " --secret_key=" + this.collabLogSecret + " --access_key=" + this.collabLogKey + " \n");
+    	  S3job.getCommand().addArgument("for x in logs/*; do mv $x \"logs/" + this.analysisIds.get(index) + "$(date +%s | tr -d '\\n')_$(basename $x | tr -d '\\n')\"; done \n");
+    	  S3job.getCommand().addArgument("docker run "
+    			  + "-v `pwd`:/collab/upload "
+    			  + "--net=\"host\" " + this.collabDockerName
+    			  + " bash -c \"s3cmd put /collab/upload/logs/* " + this.collabLogBucket + " --secret_key=" + this.collabLogSecret + " --access_key=" + this.collabLogKey + "\" \n"
+    			  );
+    	  S3job.getCommand().addArgument();
     	  S3job.getCommand().addArgument("rm -rf logs \n");
     	  index += 1;
       }
