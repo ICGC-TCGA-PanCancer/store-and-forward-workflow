@@ -300,7 +300,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
 		  GNOSjob.getCommand().addArgument("mv patched.xml " + this.analysisIds.get(index) + ".xml \n");
 		  GNOSjob.getCommand().addArgument("echo '" + url + "' > individual_download_timing.txt \n");
 		  GNOSjob.getCommand().addArgument("date +%s > individual_download_timing.txt \n");
-		  GNOSjob.getCommand().addArgument("sudo docker run "
+		  GNOSjob.getCommand().addArgument("docker run "
 					      // link in the input directory
 					      + "-v `pwd`:/workflow_data "
 					      // link in the pem key
@@ -346,7 +346,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     			  + "-e CLIENT_UPLOAD_SERVICEHOSTNAME=" + this.collabHost + " " + this.collabDockerName
     			  + " bash -c \"/collab/upload.sh /collab/upload/" + this.analysisIds.get(index) + "\" \n"
     			  );
-    	  S3job.getCommand().addArgument("for x in logs/*; do sudo mv $x \"logs/" + this.analysisIds.get(index) + "$(date +%s | tr -d '\\n')_$(basename $x | tr -d '\\n')\"; done \n");
+    	  S3job.getCommand().addArgument("for x in logs/*; do sudo mv $x \"logs/" + this.analysisIds.get(index) + "_$(date +%s | tr -d '\\n')_$(basename $x | tr -d '\\n')\"; done \n");
     	  S3job.getCommand().addArgument("docker run "
     			  + "-v `pwd`:/collab/upload "
     			  + "--net=\"host\" " + this.collabDockerName
