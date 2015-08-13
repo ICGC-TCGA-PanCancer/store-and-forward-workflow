@@ -38,8 +38,10 @@ Further description of the Git Order System and the home of the tracking folders
 The workflow uses the Collaboratory CLI to upload to the backend storage
 https://github.com/CancerCollaboratory/cli
 
-A pem key is provided to allow the worker access to this Git repo.
-A KeyStore is provided for access to the CLI.
+We store a store_and_forward.tar file in a locked down repo in Amazon to allow
+access to github for moving JSON files, and to store the JKS file used by the 
+collaboratory CLI tool.
+
 Get these from the S3 bucket:
 
 Install s3cmd and configure with your credentials (interactive).
