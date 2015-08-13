@@ -314,8 +314,9 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
       for (String url : this.downloadUrls) {
     	  // Execute the collab tool, mounting the downloads folder into /collab/upload
     	  String folder = analysisIds.get(index);
-    	  S3job.getCommand().addArgument("set fail=0 \n");
-    	  S3job.getCommand().addArgument("if ! docker run "
+    	  S3job.getCommand().addArgument("set +o errexit \n");
+    	  S3job.getCommand().addArgument("set +o pipefail \n");
+    	  S3job.getCommand().addArgument("docker run "
     			  + "-v `pwd`:/collab/upload "
     			  + "-v " + this.collabCertPath + ":/collab/storage/conf/client.jks "
     			  + "-e ACCESSTOKEN=" + this.collabToken + " "
@@ -324,9 +325,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     			  + "-e CLIENT_UPLOAD_SERVICEHOSTNAME=" + this.collabHost + " " + this.collabDockerName
     			  + " bash -c \"/collab/upload.sh /collab/upload/" + this.analysisIds.get(index) + "\" \n"
     			  );
-    	  S3job.getCommand().addArgument("    then \n");
-    	  S3job.getCommand().addArgument("         set fail=1 \n");
-    	  S3job.getCommand().addArgument("fi \n");
+    	  S3job.getCommand().addArgument("set fail=$? \n");
     	  S3job.getCommand().addArgument("for x in logs/*; do sudo mv $x \"logs/" + this.analysisIds.get(index) + "_$(date +%s | tr -d '\\n')_$(basename $x | tr -d '\\n')\"; done \n");
     	  S3job.getCommand().addArgument("docker run "
     			  + "-v `pwd`:/collab/upload "
