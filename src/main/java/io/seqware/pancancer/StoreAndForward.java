@@ -316,6 +316,8 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     	  String folder = analysisIds.get(index);
     	  S3job.getCommand().addArgument("set +o errexit \n");
     	  S3job.getCommand().addArgument("set +o pipefail \n");
+    	  S3job.getCommand().addArgument("mkdir `pwd`/logs \n");
+    	  S3job.getCommand().addArgument("set fail=0 \n");
     	  S3job.getCommand().addArgument("docker run "
     			  + "-v `pwd`:/collab/upload "
     			  + "-v " + this.collabCertPath + ":/collab/storage/conf/client.jks "
