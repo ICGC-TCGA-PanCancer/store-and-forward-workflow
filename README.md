@@ -39,7 +39,7 @@ The workflow uses the Collaboratory CLI to upload to the backend storage
 https://github.com/CancerCollaboratory/cli
 
 We store a store_and_forward.tar file in a locked down repo in Amazon to allow
-access to github for moving JSON files, and to store the JKS file used by the 
+access to a pem file for github for moving JSON files, and to store the JKS file used by the 
 collaboratory CLI tool.
 
 Get these from the S3 bucket:
