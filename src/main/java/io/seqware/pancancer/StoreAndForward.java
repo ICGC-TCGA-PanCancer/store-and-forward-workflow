@@ -51,6 +51,9 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     // Docker Config
     private String gnosDockerName = null;
     private String collabDockerName = null;
+    // Gnos Timing
+    private int gnosTimeoutMin = 20;
+    private int gnosRetries = 3;
     
     @Override
     public void setupWorkflow() {
@@ -107,8 +110,6 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
             		this.gnosTimeoutMin = Integer.parseInt(getProperty("gnosTimeoutMin"));
             if(hasPropertyAndNotNull("gnosRetries"))
             		this.gnosRetries = Integer.parseInt(getProperty("gnosRetries"));
-            if(hasPropertyAndNotNull("gnosDockerName"))
-            		this.gnosDownloadName = getProperty("gnosDockerName");
 	    
 		    // skipping
 	        if(hasPropertyAndNotNull("skipdownload")) {
@@ -282,7 +283,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
 					      // link in the pem key
 					      + "-v "
 					      + this.pemFile
-					      + ":/gnos_icgc_keyfile.pem " + this.gnosDownloadName
+					      + ":/gnos_icgc_keyfile.pem " + this.gnosDockerName
 					      // here is the Bash command to be run
 					      + " /bin/bash -c \"cd /workflow_data/ && perl -I /opt/gt-download-upload-wrapper/gt-download-upload-wrapper-2.0.11/lib "
 					      + "/opt/vcf-uploader/vcf-uploader-2.0.5/gnos_download_file.pl "
