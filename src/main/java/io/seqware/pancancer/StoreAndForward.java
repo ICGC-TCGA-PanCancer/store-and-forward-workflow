@@ -45,8 +45,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     private String collabCertPath = null;
     private String collabHost = null;
     // Collab Tool Logging
-    private String collabLogKey = null;
-    private String collabLogSecret = null;
+    private String collabS3Cfg = null;
     private String collabLogBucket = null;
     // Docker Config
     private String gnosDockerName = null;
@@ -84,8 +83,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
             this.collabCertPath = getProperty("collabCertPath");
             this.collabHost = getProperty("collabHost");
             this.collabLogBucket = getProperty("collabLogBucket");
-            this.collabLogKey = getProperty("collabLogKey");
-            this.collabLogSecret = getProperty("collabLogSecret");
+            this.collabS3Cfg = getProperty("collabS3Cfg");
             
             // Docker Config
             this.gnosDockerName = getProperty("gnosDockerName");
@@ -320,7 +318,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     	  S3job.getCommand().addArgument("docker run "
     			  + "-v `pwd`:/collab/upload "
     			  + "-v " + this.collabCertPath + ":/collab/storage/conf/client.jks "
-    			  + "-e ACCESSTOKEN=" + this.collabToken + " "
+    			  + "-e ACCESSTOKEN=`cat " + this.collabToken + " | tr -d '\\n'` "
     			  + "--net=\"host\" "
     			  + "-e CLIENT_STRICT_SSL=\"True\" "
     			  + "-e CLIENT_UPLOAD_SERVICEHOSTNAME=" + this.collabHost + " " + this.collabDockerName
@@ -332,15 +330,21 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     	  S3job.getCommand().addArgument("docker run "
     			  + "-v `pwd`:/collab/upload "
     			  + "--net=\"host\" " + this.collabDockerName
-    			  + " bash -c \"s3cmd put /collab/upload/logs/* " + this.collabLogBucket + " --secret_key=" + this.collabLogSecret + " --access_key=" + this.collabLogKey + "\" \n"
+    			  + " bash -c \"s3cmd put /collab/upload/logs/* " + this.collabLogBucket + " -c " + this.collabS3Cfg +" \n"
     			  );
-    	  S3job.getCommand().addArgument("sudo mv logs ../logs.uploaded \n");
+    	  S3job.getCommand().addArgument("fail2=$? \n");
+    	  S3job.getCommand().addArgument("echo \"Received a $fail2 exit code from the logging container.\" \n");
+    	  S3job.getCommand().addArgument("if [[ $fail2 -ne 0 ]]; then \n");
+    	  S3job.getCommand().addArgument("	fail=$fail2 \n");
+    	  S3job.getCommand().addArgument("fi \n");
+    	  S3job.getCommand().addArgument("sudo mv logs .. \n");
     	  index += 1;
       }
       S3job.getCommand().addArgument("du -c . | grep total | awk '{ print $1 }' > ../upload.size \n");
       S3job.getCommand().addArgument("cd .. \n");
       S3job.getCommand().addArgument("date +%s >> upload_timing.txt \n");
       S3job.getCommand().addArgument("date +%s >> workflow_timing.txt \n");
+      S3job.getCommand().addArgument("# $fail will return a non-zero value if either docker container call fails");
       S3job.getCommand().addArgument("exit $fail \n");
       S3job.addParent(getReferenceDataJob);
       return(S3job);
