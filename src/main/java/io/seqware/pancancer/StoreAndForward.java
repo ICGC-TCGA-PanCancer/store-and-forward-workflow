@@ -12,24 +12,12 @@ import java.lang.Long;
 import net.sourceforge.seqware.pipeline.workflowV2.AbstractWorkflowDataModel;
 import net.sourceforge.seqware.pipeline.workflowV2.model.Job;
 
-/**
- * <p>
- * For more information on developing workflows, see the documentation at <a
- * href="http://seqware.github.io/docs/6-pipeline/java-workflows/">SeqWare Java Workflows</a>.
- * </p>
- *
- * Quick reference for the order of steps: 1. setupDirectory 2. GNOS Download 3. Verify Files 4. S3Upload 5. Notify ElasticSearch 6. Cleanup
- *
- * See the SeqWare API for <a href=
- * "http://seqware.github.io/javadoc/stable/apidocs/net/sourceforge/seqware/pipeline/workflowV2/AbstractWorkflowDataModel.html#setupDirectory%28%29"
- * >AbstractWorkflowDataModel</a> for more information.
- */
 public class StoreAndForward extends AbstractWorkflowDataModel {
   
     // job utilities
     private JobUtilities utils = new JobUtilities();
 
-    // variables
+    // Common Variables
     private static final String SHARED_WORKSPACE = "shared_workspace";
     private ArrayList<String> analysisIds = null;
     private ArrayList<String> downloadUrls = null;
@@ -37,19 +25,10 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     private String gnosServer = null;
     private String pemFile = null;
     private String formattedDate;
-    // skip
+    // Booleans for sequence control
     private Boolean skipdownload = false;
     private Boolean skipupload = false;
-    // cleanup
     private Boolean cleanup = true;
-    // GNOS timeout
-    private int gnosTimeoutMin = 20;
-    private int gnosRetries = 3;
-    // S3 
-    private String s3Key = null;
-    private String s3SecretKey = null;
-    private String uploadS3Bucket = null;
-    private String uploadTimeout = null;
     // JSON Configuration
     private String JSONrepo = null;
     private String JSONlocation = "/datastore/gitroot";
@@ -57,20 +36,24 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     private String JSONfolderName = null;
     private String JSONfileName = null;
     private String JSONxmlHash = null;
-    // Gnos Configuration
+    // Git Configuration
     private String GITemail = "nbyrne.oicr@gmail.com";
     private String GITname = "ICGC AUTOMATION";
     private String GITPemFile = null;
-    // Colabtool
+    // Collab Tool
     private String collabToken = null;
     private String collabCertPath = null;
     private String collabHost = null;
+    // Collab Tool Logging
+    private String collabLogKey = null;
+    private String collabLogSecret = null;
+    private String collabLogBucket = null;
     // Docker Config
     private String gnosDockerName = null;
     private String collabDockerName = null;
-    // workflows to run
-    // docker names
-    private String gnosDownloadName = "pancancer/pancancer_upload_download";
+    // Gnos Timing
+    private int gnosTimeoutMin = 20;
+    private int gnosRetries = 3;
     
     @Override
     public void setupWorkflow() {
@@ -96,10 +79,13 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
             	this.downloadMetadataUrls.add(downloadMetadataURLBuilder.toString());
             }
             
-            // Collab
+            // Collab Tool
             this.collabToken = getProperty("collabToken");
             this.collabCertPath = getProperty("collabCertPath");
             this.collabHost = getProperty("collabHost");
+            this.collabLogBucket = getProperty("collabLogBucket");
+            this.collabLogKey = getProperty("collabLogKey");
+            this.collabLogSecret = getProperty("collabLogSecret");
             
             // Docker Config
             this.gnosDockerName = getProperty("gnosDockerName");
@@ -124,8 +110,6 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
             		this.gnosTimeoutMin = Integer.parseInt(getProperty("gnosTimeoutMin"));
             if(hasPropertyAndNotNull("gnosRetries"))
             		this.gnosRetries = Integer.parseInt(getProperty("gnosRetries"));
-            if(hasPropertyAndNotNull("gnosDockerName"))
-            		this.gnosDownloadName = getProperty("gnosDockerName");
 	    
 		    // skipping
 	        if(hasPropertyAndNotNull("skipdownload")) {
@@ -233,6 +217,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
 	    	consolidateTiming.getCommand().addArgument("git stage . \n");
 	    	consolidateTiming.getCommand().addArgument("git commit -m 'Timing for: " + this.analysisIds.get(index) + "' \n");
 	    	consolidateTiming.getCommand().addArgument("git push \n");
+	    	index += 1;
     	}
     	consolidateTiming.addParent(lastJob);
     	return(consolidateTiming);
@@ -249,7 +234,6 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     
     private Job createDirectoriesJob() {
 		Job createSharedWorkSpaceJob = this.getWorkflow().createBashJob("create_dirs");
-		createSharedWorkSpaceJob.getCommand().addArgument("mkdir -m 0777 -p " + SHARED_WORKSPACE + " \n");
 		createSharedWorkSpaceJob.getCommand().addArgument("mkdir -m 0777 -p " + SHARED_WORKSPACE + "/downloads \n");
 		createSharedWorkSpaceJob.getCommand().addArgument("cd " + SHARED_WORKSPACE + " \n");
 		createSharedWorkSpaceJob.getCommand().addArgument("date +%s > workflow_timing.txt \n");
@@ -275,6 +259,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     private Job createGNOSJob(Job getReferenceDataJob) {
 	  Job GNOSjob = this.getWorkflow().createBashJob("GNOS_download");
 	  if (this.skipdownload == true) {
+		  GNOSjob.getCommand().addArgument("# You have skip download enabled in your ini file.  \n");
 		  GNOSjob.getCommand().addArgument("exit 0 \n");
 	  }
 	  GNOSjob.getCommand().addArgument("cd " + SHARED_WORKSPACE + "/downloads \n");
@@ -292,13 +277,13 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
 		  GNOSjob.getCommand().addArgument("mv patched.xml " + this.analysisIds.get(index) + ".xml \n");
 		  GNOSjob.getCommand().addArgument("echo '" + url + "' > individual_download_timing.txt \n");
 		  GNOSjob.getCommand().addArgument("date +%s > individual_download_timing.txt \n");
-		  GNOSjob.getCommand().addArgument("sudo docker run "
+		  GNOSjob.getCommand().addArgument("docker run "
 					      // link in the input directory
 					      + "-v `pwd`:/workflow_data "
 					      // link in the pem key
 					      + "-v "
 					      + this.pemFile
-					      + ":/gnos_icgc_keyfile.pem " + this.gnosDownloadName
+					      + ":/gnos_icgc_keyfile.pem " + this.gnosDockerName
 					      // here is the Bash command to be run
 					      + " /bin/bash -c \"cd /workflow_data/ && perl -I /opt/gt-download-upload-wrapper/gt-download-upload-wrapper-2.0.11/lib "
 					      + "/opt/vcf-uploader/vcf-uploader-2.0.5/gnos_download_file.pl "
@@ -329,6 +314,9 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
       for (String url : this.downloadUrls) {
     	  // Execute the collab tool, mounting the downloads folder into /collab/upload
     	  String folder = analysisIds.get(index);
+    	  S3job.getCommand().addArgument("set +o errexit \n");
+    	  S3job.getCommand().addArgument("set +o pipefail \n");
+    	  S3job.getCommand().addArgument("fail=0 \n");
     	  S3job.getCommand().addArgument("docker run "
     			  + "-v `pwd`:/collab/upload "
     			  + "-v " + this.collabCertPath + ":/collab/storage/conf/client.jks "
@@ -336,14 +324,24 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     			  + "--net=\"host\" "
     			  + "-e CLIENT_STRICT_SSL=\"True\" "
     			  + "-e CLIENT_UPLOAD_SERVICEHOSTNAME=" + this.collabHost + " " + this.collabDockerName
-    			  + " bash -c \"/collab/upload.sh /collab/upload/" + this.analysisIds.get(index)+"\" \n"
+    			  + " bash -c \"/collab/upload.sh /collab/upload/" + this.analysisIds.get(index) + "\" \n"
     			  );
+    	  S3job.getCommand().addArgument("fail=$? \n");
+    	  S3job.getCommand().addArgument("echo \"Received a $fail exit code from the upload container.\" \n");
+    	  S3job.getCommand().addArgument("for x in logs/*; do sudo mv $x \"logs/" + this.analysisIds.get(index) + "_$(date +%s | tr -d '\\n')_$(basename $x | tr -d '\\n')\"; done \n");
+    	  S3job.getCommand().addArgument("docker run "
+    			  + "-v `pwd`:/collab/upload "
+    			  + "--net=\"host\" " + this.collabDockerName
+    			  + " bash -c \"s3cmd put /collab/upload/logs/* " + this.collabLogBucket + " --secret_key=" + this.collabLogSecret + " --access_key=" + this.collabLogKey + "\" \n"
+    			  );
+    	  S3job.getCommand().addArgument("sudo mv logs ../logs.uploaded \n");
     	  index += 1;
       }
       S3job.getCommand().addArgument("du -c . | grep total | awk '{ print $1 }' > ../upload.size \n");
       S3job.getCommand().addArgument("cd .. \n");
       S3job.getCommand().addArgument("date +%s >> upload_timing.txt \n");
       S3job.getCommand().addArgument("date +%s >> workflow_timing.txt \n");
+      S3job.getCommand().addArgument("exit $fail \n");
       S3job.addParent(getReferenceDataJob);
       return(S3job);
     }
