@@ -45,19 +45,19 @@ We store a tar file in S3://oicr.private.images that contains the following file
 >c) s3cfg (An s3cmd config file used to aggregate Collaboratory log files.)<br>
 >d) token (A text file containing an auth token for the Collaboratory tool.)<br>
 
-Get these from the S3 bucket:
+Get this file from the S3 bucket:
 
 Install s3cmd and configure with your credentials (interactive).
 ```
 sudo apt-get install s3cmd
 s3cmd --configure
 ```
-Download "store_and_forward.tar" and unpack
+Download "store_and_forward1.1.tar.gz" and unpack
 ```
 cd /home/ubuntu
 s3cmd get s3://oicr.docker.private.images/store-and-forward.tar
 mkdir /home/ubuntu/.gnos/
-tar xvf store-and-forward.tar
+tar xvzf store_and_forward1.1.tar.gz
 mv /home/ubuntu/store-and-forward/* /home/ubuntu/.gnos/
 ```
 Copy your gnos pem key to `/home/ubuntu/.gnos/gnos.pem`
@@ -71,12 +71,12 @@ cd /workflows
 wget https://seqwaremaven.oicr.on.ca/artifactory/seqware-release/com/github/seqware/seqware-distribution/1.1.1/seqware-distribution-1.1.1-full.jar
 
 s3cmd get s3://oicr.workflow.bundles/released-bundles/Workflow_Bundle_StoreAndForward_1.0.3_SeqWare_1.1.0.zip
-java -cp seqware-distribution-1.1.1-full.jar net.sourceforge.seqware.pipeline.tools.UnZip --input-zip Workflow_Bundle_StoreAndForward_1.0.3_SeqWare_1.1.0.zip --output-dir /workflows/Workflow_Bundle_StoreAndForward_1.0.3_SeqWare_1.1.0
+java -cp seqware-distribution-1.1.1-full.jar net.sourceforge.seqware.pipeline.tools.UnZip --input-zip Workflow_Bundle_StoreAndForward_1.0.9_SeqWare_1.1.0.zip --output-dir /workflows/Workflow_Bundle_StoreAndForward_1.0.9_SeqWare_1.1.0
 ```
 
 #### Run the workflow using docker
 ```
-docker run -h master -it -v /var/run/docker.sock:/var/run/docker.sock -v /home/ubuntu/.gnos:/home/ubuntu/.gnos -v /datastore:/datastore -v /workflows:/workflows -v <your local ini file>:/workflow.ini seqware/seqware_whitestar_pancancer:1.1.1 bash -c "seqware bundle launch --ini /workflow.ini --dir /workflows/Workflow_Bundle_StoreAndForward_1.0.3_SeqWare_1.1.0/ --engine whitestar --no-metadata"
+docker run -h master -it -v /var/run/docker.sock:/var/run/docker.sock -v /home/ubuntu/.gnos:/home/ubuntu/.gnos -v /datastore:/datastore -v /workflows:/workflows -v <your local ini file>:/workflow.ini seqware/seqware_whitestar_pancancer:1.1.1 bash -c "seqware bundle launch --ini /workflow.ini --dir /workflows/Workflow_Bundle_StoreAndForward_1.0.9_SeqWare_1.1.0/ --engine whitestar --no-metadata"
 ```
 
 ## On .ini files
