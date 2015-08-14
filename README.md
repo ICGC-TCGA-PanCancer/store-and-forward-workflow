@@ -47,7 +47,7 @@ Install s3cmd and configure with your credentials (interactive).
 sudo apt-get install s3cmd
 s3cmd --configure
 ```
-Download "store_and_forward.tar" and unpack
+Download "store\_and\_forward.tar" and unpack
 ```
 cd /home/ubuntu
 s3cmd get s3://oicr.docker.private.images/store-and-forward.tar
