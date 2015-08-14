@@ -55,7 +55,7 @@ s3cmd --configure
 Download "store_and_forward1.1.tar.gz" and unpack
 ```
 cd /home/ubuntu
-s3cmd get s3://oicr.docker.private.images/store-and-forward.tar
+s3cmd get s3://oicr.docker.private.images/store_and_forward1.1.tar.gz
 mkdir /home/ubuntu/.gnos/
 tar xvzf store_and_forward1.1.tar.gz
 mv /home/ubuntu/store-and-forward/* /home/ubuntu/.gnos/
