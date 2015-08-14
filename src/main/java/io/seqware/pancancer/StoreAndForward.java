@@ -329,6 +329,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     	  S3job.getCommand().addArgument("for x in logs/*; do sudo mv $x \"logs/" + this.analysisIds.get(index) + "_$(date +%s | tr -d '\\n')_$(basename $x | tr -d '\\n')\"; done \n");
     	  S3job.getCommand().addArgument("docker run "
     			  + "-v `pwd`:/collab/upload "
+    			  + "-v /home/ubuntu/.gnos:/home/ubuntu/.gnos "
     			  + "--net=\"host\" " + this.collabDockerName
     			  + " bash -c \"s3cmd put /collab/upload/logs/* " + this.collabLogBucket + " -c " + this.collabS3Cfg +"\" \n"
     			  );
@@ -344,7 +345,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
       S3job.getCommand().addArgument("cd .. \n");
       S3job.getCommand().addArgument("date +%s >> upload_timing.txt \n");
       S3job.getCommand().addArgument("date +%s >> workflow_timing.txt \n");
-      S3job.getCommand().addArgument("# $fail will return a non-zero value if either docker container call fails");
+      S3job.getCommand().addArgument("# $fail will return a non-zero value if either docker container call fails \n");
       S3job.getCommand().addArgument("exit $fail \n");
       S3job.addParent(getReferenceDataJob);
       return(S3job);
