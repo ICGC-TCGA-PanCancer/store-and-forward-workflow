@@ -39,11 +39,11 @@ The workflow uses the Collaboratory CLI to upload to the backend storage
 https://github.com/CancerCollaboratory/cli
 
 ##### Secured Dependencies
-We store a tar file in S3://oicr.private.images that contains the following files:
->a) github.pem (A ssh key for commiting to github in an automated fashion)
->b) client.jks (A keystore used by the Collaboratory CLI tool)
->c) s3cfg (An s3cmd config file used to aggregate Collaboratory log files.)
->d) token (A text file containing an auth token for the Collaboratory tool.)```
+We store a tar file in S3://oicr.private.images that contains the following files:<br>
+>a) github.pem (A ssh key for commiting to github in an automated fashion)<br>
+>b) client.jks (A keystore used by the Collaboratory CLI tool)<br>
+>c) s3cfg (An s3cmd config file used to aggregate Collaboratory log files.)<br>
+>d) token (A text file containing an auth token for the Collaboratory tool.)<br>
 
 Get these from the S3 bucket:
 
