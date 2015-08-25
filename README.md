@@ -52,12 +52,12 @@ Install s3cmd and configure with your credentials (interactive).
 sudo apt-get install s3cmd
 s3cmd --configure
 ```
-Download "store_and_forward1.1.tar.gz" and unpack
+Download "store-and-forward1.1.tar.gz" and unpack
 ```
 cd /home/ubuntu
 s3cmd get s3://oicr.docker.private.images/store-and-forward1.1.tar.gz
 mkdir /home/ubuntu/.gnos/
-tar xvzf store_and_forward1.1.tar.gz
+tar xvzf store-and-forward1.1.tar.gz
 mv /home/ubuntu/store-and-forward/* /home/ubuntu/.gnos/
 ```
 Copy your gnos pem key to `/home/ubuntu/.gnos/gnos.pem`
