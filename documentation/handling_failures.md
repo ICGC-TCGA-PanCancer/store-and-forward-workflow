@@ -8,7 +8,7 @@ Eventually, the workflow may be modified have failed jobs moved automatically to
 
 This is one way to work through failed workers, but there are certainly other processes that get it done.
 
-1. **Find failed workers** On Slack, go to the channel for this fleet **s3-upload-aws-va**, type the command `@<name_of_fleet_bot, e.g. cecilesfleet> status` a summary of the fleet will be shown, including a list of failed workers, if there are any. If there are none, you are done! Check again periodically.
+1. **Find failed workers** On Slack, go to the channel for this fleet *s3-upload-aws-va*, type the command `@<name_of_fleet_bot, e.g. cecilesfleet> status` a summary of the fleet will be shown, including a list of failed workers, if there are any. If there are none, you are done! Check again periodically.
 
 2. **Login to workers** The launcher host machine and the workers are in the same security group, so if you are on the launcher, you can ssh to the workers using the private IP addresses listed in the status above. Login to the launcher host machine (but don't attach to the launcher container). This is where you might want to start a tmux or screen session, then you can ssh to your workers.
 
@@ -46,12 +46,12 @@ In the future, this step may be performed by the workflow, automatically moving 
 6. **Terminate instances** The workflow has now either finished successfully, or given up on for the time being (by moving the associated json to the Git failed-jobs/ folder). You can now terminate the instances the jobs were run on.
    * Option 1: Get the instance ID. If you're logged in to the worker, it's in the terminal prompt. Instance IDs are also shown in the status shown by the Slack bot (but it might not be immediately obvious which job is associated with which instance). Select this instance on the AWS web console (can use the search field near the top on the instances page). Right-click > Instance State > Terminate.
    * Option 2: Use the Reaper from inside the launcher container. This is nice if you know all the IP addresses of the workers because then you can terminate them in bulk, e.g. if you have some sort of automated process or a script. (If failures need to be investigated by a human, this can take time, and that time could be used to provision new workers while the next one is being investigated.) Collect all the IP addresses of interest in a file. We have one started in the launcher container `~/arch3/kill-list.json` and it has the format
-      ```
-      [
-      "172.1.1.1",
-      "172.2.2.2",
-      "54.3.3.3"
-      ]
-      ```
+    ```
+    [
+    "172.1.1.1",
+    "172.2.2.2",
+    "54.3.3.3"
+    ]
+    ```
 Then call the Reaper `Reaper --kill-list kill-list.json` [Ref: https://github.com/ICGC-TCGA-PanCancer/pancancer_launcher]
 The instances will be wiped out and new workers can be provisioned to take their place.
