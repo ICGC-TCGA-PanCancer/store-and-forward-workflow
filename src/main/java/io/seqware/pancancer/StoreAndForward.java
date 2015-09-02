@@ -282,8 +282,8 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
 					      + this.pemFile
 					      + ":/gnos_icgc_keyfile.pem " + this.gnosDockerName
 					      // here is the Bash command to be run
-					      + " /bin/bash -c \"cd /workflow_data/ && perl -I /opt/gt-download-upload-wrapper/gt-download-upload-wrapper-2.0.11/lib "
-					      + "/opt/vcf-uploader/vcf-uploader-2.0.5/gnos_download_file.pl "
+					      + " /bin/bash -c \"cd /workflow_data/ && perl -I /opt/gt-download-upload-wrapper/gt-download-upload-wrapper-2.0.13/lib "
+					      + "/opt/vcf-uploader/vcf-uploader-2.0.7/gnos_download_file.pl "
 					      + "--url " + url + " . "
 					      + " --retries " + this.gnosRetries + " --timeout-min " + this.gnosTimeoutMin + " "
 					      + " --file /gnos_icgc_keyfile.pem "
