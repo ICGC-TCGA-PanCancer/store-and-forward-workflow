@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <prerequisites>
-        <maven>2.2.1</maven>
+        <maven>3.0.4</maven>
     </prerequisites>
 
     <groupId>io.seqware</groupId>
@@ -131,6 +131,49 @@
                 </replacements>
               </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <version>2.12.1</version>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>
+                            compile
+                        </phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <enableFilesSummary>true</enableFilesSummary>
+                            <enableRulesSummary>true</enableRulesSummary>
+                            <consoleOutput>true</consoleOutput>
+                            <configLocation>checkstyle.xml</configLocation>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <threshold>High</threshold>
+                    <excludeFilterFile>
+                        ${project.basedir}/findbugs-exclude.xml
+                    </excludeFilterFile>
+                </configuration>
+            </plugin>
+
+
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
