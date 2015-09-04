@@ -44,6 +44,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     // Gnos Timing
     private int gnosTimeoutMin = DEFAULT_GNOS_TIMEOUT_MIN;
     private int gnosRetries = DEFAULT_GNOS_RETRIES;
+    private Float gnosMinimumDownloadRate = null;
 
     @Override
     public void setupWorkflow() {
@@ -95,6 +96,9 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
             }
             if(hasPropertyAndNotNull("gnosRetries")) {
 		            this.gnosRetries = Integer.parseInt(getProperty("gnosRetries"));
+            }
+            if(hasPropertyAndNotNull("gnosMinimumDownloadRateMB")){
+		            this.gnosMinimumDownloadRate = Float.parseFloat(getProperty("gnosMinimumDownloadRateMB"));
             }
 	    
 		    // skipping
@@ -275,6 +279,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
 					      + "--url " + url + " . "
 					      + " --retries " + this.gnosRetries + " --timeout-min " + this.gnosTimeoutMin + " "
 					      + " --file /gnos_icgc_keyfile.pem "
+				          + (this.gnosMinimumDownloadRate != null ? "--min-mbyte-download-rate " + this.gnosMinimumDownloadRate:"")
 					      + " --pem /gnos_icgc_keyfile.pem\" \n");
 		  gnosJob.getCommand().addArgument("sudo chown -R seqware:seqware " + this.analysisIds.get(index) + " \n");
 		  gnosJob.getCommand().addArgument("date +%s >> individual_download_timing.txt \n");
