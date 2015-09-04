@@ -9,9 +9,9 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
 
 		// Common Variables
     private static final String SHARED_WORKSPACE = "shared_workspace";
-		public static final int DEFAULT_GNOS_TIMEOUT_MIN = 20;
-		public static final int DEFAULT_GNOS_RETRIES = 3;
-		private ArrayList<String> analysisIds = null;
+    public static final int DEFAULT_GNOS_TIMEOUT_MIN = 20;
+    public static final int DEFAULT_GNOS_RETRIES = 3;
+    private ArrayList<String> analysisIds = null;
     private ArrayList<String> downloadUrls = null;
     private ArrayList<String> downloadMetadataUrls = null;
     private String gnosServer = null;
@@ -81,13 +81,13 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
             this.collabDockerName = getProperty("collabDockerName");
             
             // JSON Git Repo
-            this.jsonRepo = getProperty("jsonRepo");
-            this.jsonFolderName = getProperty("jsonFolderName");
-            this.jsonFileName = getProperty("jsonFileName");
-            this.jsonXmlHash = getProperty("jsonXmlHash");
-            this.gitEmail = getProperty("gitEmail");
-            this.gitName = getProperty("gitName");
-            this.gitPemFile = getProperty("gitPemFile");
+            this.jsonRepo = getProperty("JSONrepo");
+            this.jsonFolderName = getProperty("JSONfolderName");
+            this.jsonFileName = getProperty("JSONfileName");
+            this.jsonXmlHash = getProperty("JSONxmlHash");
+            this.gitEmail = getProperty("GITemail");
+            this.gitName = getProperty("GITname");
+            this.gitPemFile = getProperty("GITPemFile");
 
             // GNOS timeouts
             if(hasPropertyAndNotNull("gnosTimeoutMin")) {
