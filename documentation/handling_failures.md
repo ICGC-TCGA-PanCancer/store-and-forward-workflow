@@ -55,3 +55,56 @@ In the future, this step may be performed by the workflow, automatically moving 
     ```
 Then call the Reaper `Reaper --kill-list kill-list.json` [Ref: https://github.com/ICGC-TCGA-PanCancer/pancancer_launcher]
 The instances will be wiped out and new workers can be provisioned to take their place.
+
+### Automatic Worker Instance Termination
+
+The production system automatically terminates worker instances after the workflow it was running failed. The stdout and stderr is logged along with the event in the launcher's database. However, the s3-transfer-operations repos is not automatically updated to indicate the occurence of failure.
+
+A script was created to compare the failed job record in the database with the location of the corresponding JSON job description file in s3-transfer-operations. In addition to locating the file, it will also try to determine a reason for failure by searching for keywords in the stdout/stderr logs to provide a more descriptive commit message.
+
+The script currently has execution of `git mv` and `git commit` instructions disabled for safety reasons, the `-os` flag should be used to output them to the console for examination.
+
+**Typical workflow**:
+
+1. Identify unsuccessful (i.e. failed jobs) w/ MarkFailedJobs.py in the launcher container.
+
+2. Query the launcher database to identify common causes for failure.
+
+3. Run MarkFailedJobs.py, specifying a search phrase w/ `-s search_term` and a description of the problem w/ `-r failure_reason` to record in the commit message for all matching jobs.
+
+4. Execute the git commands in the local s3-transfer-operations repository.
+
+**Help Output**
+```
+usage: MarkFailedJobs.py [-h] [-s search_term] [-r failure_reason]
+                         [-d dest_queue] [-f] [-os]
+
+Determine the reason that a job has failed, and then move it to failed-jobs
+(or some other queue).
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s search_term, --search search_term
+                        a string to match in the failed job's stdout log.
+  -r failure_reason, --reason failure_reason
+                        the failure reason corresponding to the search
+                        parameter.
+  -d dest_queue, --dest dest_queue
+                        the destination queue to move the JSON file to.
+  -f, --force           do not prompt for verification.
+  -os, --oscript        output the git commands as a script.
+```
+**Example Usage**
+
+List all the unhandled failed jobs (the -f flag disables the interactive prompt):
+```
+python3 MarkFailedJobs.py -f
+```
+Filter failed jobs with a unique diagnostic phrase located in stdout and specify a custom failure reason:
+```
+python3 MarkFailedJobs.py -f -s 'ERROR: The xml data downloaded' -r 'ETRI XML Error'
+```
+Move all failed jobs to queued-jobs and output instructions to a script:
+```
+python3 MarkFailedJobs.py -f --dest 'queued-jobs' -os > git_job_instrs.sh
+```
