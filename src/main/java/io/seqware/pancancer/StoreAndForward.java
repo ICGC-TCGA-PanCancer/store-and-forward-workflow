@@ -171,7 +171,8 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     private Job gitMove(Job lastJob, String src, String dst) {
     	Job manageGit = this.getWorkflow().createBashJob("git_manage_" + src + "_" + dst);
     	String path = this.jsonLocation + "/" +  this.jsonRepoName + "/" + this.jsonFolderName;
-    	manageGit.getCommand().addArgument("git config --global user.name " + this.gitName + " \n");
+		manageGit.getCommand().addArgument("sleep $(( $RANDOM % 100))\n");
+		manageGit.getCommand().addArgument("git config --global user.name " + this.gitName + " \n");
     	manageGit.getCommand().addArgument("git config --global user.email " + this.gitEmail + " \n");
     	manageGit.getCommand().addArgument("if [[ ! -d " + path + " ]]; then mkdir -p " + path + "; fi \n");
     	manageGit.getCommand().addArgument("cd " + path + " \n");
@@ -183,7 +184,6 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     	manageGit.getCommand().addArgument("git stage . \n");
     	manageGit.getCommand().addArgument("git commit -m '" + dst + ": " + this.jsonFileName +"' \n");
     	manageGit.getCommand().addArgument("git push \n");
-    	manageGit.getCommand().addArgument("sleep $(bc <<< \"scale=5; $RANDOM / 32767 * 10\"  ) \n");
     	manageGit.addParent(lastJob);
     	return manageGit;
     }
