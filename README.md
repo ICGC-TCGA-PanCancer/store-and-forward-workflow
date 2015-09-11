@@ -52,12 +52,12 @@ Install s3cmd and configure with your credentials (interactive).
 sudo apt-get install s3cmd
 s3cmd --configure
 ```
-Download "store\_and\_forward1.1.tar.gz" and unpack
+Download "store-and-forward1.1.tar.gz" and unpack
 ```
 cd /home/ubuntu
-s3cmd get s3://oicr.docker.private.images/store_and_forward1.1.tar.gz
+s3cmd get s3://oicr.docker.private.images/store-and-forward1.1.tar.gz
 mkdir /home/ubuntu/.gnos/
-tar xvzf store_and_forward1.1.tar.gz
+tar xvzf store-and-forward1.1.tar.gz
 mv /home/ubuntu/store-and-forward/* /home/ubuntu/.gnos/
 ```
 Copy your gnos pem key to `/home/ubuntu/.gnos/gnos.pem`
@@ -70,7 +70,7 @@ sudo apt-get install openjdk-7-jre-headless
 cd /workflows
 wget https://seqwaremaven.oicr.on.ca/artifactory/seqware-release/com/github/seqware/seqware-distribution/1.1.1/seqware-distribution-1.1.1-full.jar
 
-s3cmd get s3://oicr.workflow.bundles/released-bundles/Workflow_Bundle_StoreAndForward_1.0.3_SeqWare_1.1.0.zip
+s3cmd get s3://oicr.workflow.bundles/released-bundles/Workflow_Bundle_StoreAndForward_1.0.9_SeqWare_1.1.0.zip
 java -cp seqware-distribution-1.1.1-full.jar net.sourceforge.seqware.pipeline.tools.UnZip --input-zip Workflow_Bundle_StoreAndForward_1.0.9_SeqWare_1.1.0.zip --output-dir /workflows/Workflow_Bundle_StoreAndForward_1.0.9_SeqWare_1.1.0
 ```
 
