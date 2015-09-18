@@ -31,3 +31,26 @@ Uploads can be verified (e.g. during testing or early production, this is not ex
 - one could also spot check the uploads by downloading one of the smaller files and checking the contents
 
 inf) End of day: Detach from the pancancer_launcher container (Ctrl-P, Ctrl-Q).
+
+### Compare XML MD5 Hashsums
+
+In each JSON job description file is a pregenerated MD5 hashsum for the GNOS Analysis XML file, this XML file is downloaded from the gt-repos using its REST service and an MD5 hashsum calculated on the returned data. The two MD5 hashsums should match, or the workflow will fail since the files are different. VerifyXMLHash.py compares the MD5 hashsum in the JSON files in the queued-jobs folder of the corresponding s3-transfer-operations/ queue with the MD5 hashsum of the response from the corresponding gt-repo using the analysis id specified in the JSON file.
+
+If there is a mismatch, then the a sequence of git commands can be output as a script using the `-os` flag to move the inconsistent JSON file to the failed-jobs or backlog-jobs queue for editting.
+
+**Typical workflow**:
+
+1. Run VerifyXMLHash.py to find mismatching XML MD5 hashsums.
+
+2. Use the `-os` flag to output git instructions to transfer the failed-jobs queue for correction.
+
+**Example Usage**
+
+Compare MD5 hashsums in all JSON files in queued-jobs:
+```
+python3 VerifyXMLHash.py
+```
+Move all failed jobs to backlog-jobs and output instructions to a script:
+```
+python3 VerifyXMLHash.py --dest 'backlog-jobs' -os > git_instrs.sh
+```
