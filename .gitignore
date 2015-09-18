@@ -1,0 +1,7 @@
+.idea
+store-and-forward-workflow.iml
+*.iml
+target
+*.swp
+*.orig
+src/main/java/io/seqware/pancancer/Version.java
