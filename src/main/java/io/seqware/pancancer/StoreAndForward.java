@@ -44,6 +44,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     private String collabToken = null;
     private String collabCertPath = null;
     private String collabHost = null;
+    private String collabRepo = "s3";	// "collab", "azure"
     // Collab Tool Logging
     private String collabLogKey = null;
     private String collabLogSecret = null;
@@ -303,6 +304,15 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     }
     
     private Job S3toolJob( Job getReferenceDataJob) {
+    	String uploadScript = "";
+    	switch(collabRepo) {
+    	case "collab":
+    		uploadScript = "upload-collab.sh";
+    		break;
+    	default:
+    		uploadScript = "upload.sh";
+    		break;
+    	}
       Job S3job = this.getWorkflow().createBashJob("S3_upload");
       if (skipupload == true) {
     	  S3job.getCommand().addArgument("# Skip upload was turned on in your ini file \n");
@@ -324,7 +334,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     			  + "--net=\"host\" "
     			  + "-e CLIENT_STRICT_SSL=\"True\" "
     			  + "-e CLIENT_UPLOAD_SERVICEHOSTNAME=" + this.collabHost + " " + this.collabDockerName
-    			  + " bash -c \"/collab/upload.sh /collab/upload/" + this.analysisIds.get(index) + "\" \n"
+    			  + " bash -c \"/collab/" + uploadScript + " /collab/upload/" + this.analysisIds.get(index) + "\" \n"
     			  );
     	  S3job.getCommand().addArgument("fail=$? \n");
     	  S3job.getCommand().addArgument("echo \"Received a $fail exit code from the upload container.\" \n");
