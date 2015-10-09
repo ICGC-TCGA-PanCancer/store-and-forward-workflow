@@ -34,5 +34,5 @@ Instructions to setup a build environment for this workflow.
     ```exit```<br>
     OUTSIDE THE CONTAINER:<br>
     ```cd /home/ubuntu/gitroot/store-and-forward-workflow```<br>
-    ```s3cmd put Workflow_Bundle_StoreAndForward_1.0.2_SeqWare_1.1.0.zip s3://oicr.workflow.bundles/released-bundles```<br>
+    ```s3cmd put Workflow_Bundle_StoreAndForward_1.0.2_SeqWare_1.1.0.zip s3://oicr.workflow.bundles/released-bundles/Workflow_Bundle_StoreAndForward_1.0.2_SeqWare_1.1.0.zip```<br>
     
