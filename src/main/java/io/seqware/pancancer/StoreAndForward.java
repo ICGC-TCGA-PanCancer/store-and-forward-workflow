@@ -44,7 +44,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     private String collabToken = null;
     private String collabCertPath = null;
     private String collabHost = null;
-    private String collabRepo = "s3";	// "collab", "azure"
+    private String storageRepo = "s3";	// "collab", "azure"
     // Collab Tool Logging
     private String collabLogKey = null;
     private String collabLogSecret = null;
@@ -84,9 +84,18 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
             this.collabToken = getProperty("collabToken");
             this.collabCertPath = getProperty("collabCertPath");
             this.collabHost = getProperty("collabHost");
-            this.collabLogBucket = getProperty("collabLogBucket");
-            this.collabLogKey = getProperty("collabLogKey");
-            this.collabLogSecret = getProperty("collabLogSecret");
+            if (this.hasPropertyAndNotNull("collabLogBucket")) {
+            	this.collabLogBucket = getProperty("collabLogBucket");
+            }
+            if (this.hasPropertyAndNotNull("collabLogKey")) {
+            	this.collabLogKey = getProperty("collabLogKey");	
+            }
+            if (this.hasPropertyAndNotNull("collabLogSecret")) {
+            	this.collabLogSecret = getProperty("collabLogSecret");
+            }
+            if (this.hasPropertyAndNotNull("storageRepo")) {
+            	this.storageRepo = getProperty("storageRepo");
+            }
             
             // Docker Config
             this.gnosDockerName = getProperty("gnosDockerName");
@@ -305,7 +314,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     
     private Job S3toolJob( Job getReferenceDataJob) {
     	String uploadScript = "";
-    	switch(collabRepo) {
+    	switch(storageRepo) {
     	case "collab":
     		uploadScript = "upload-collab.sh";
     		break;
