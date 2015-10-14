@@ -348,11 +348,13 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     	  S3job.getCommand().addArgument("fail=$? \n");
     	  S3job.getCommand().addArgument("echo \"Received a $fail exit code from the upload container.\" \n");
     	  S3job.getCommand().addArgument("for x in logs/*; do sudo mv $x \"logs/" + this.analysisIds.get(index) + "_$(date +%s | tr -d '\\n')_$(basename $x | tr -d '\\n')\"; done \n");
+/*
     	  S3job.getCommand().addArgument("docker run "
     			  + "-v `pwd`:/collab/upload "
     			  + "--net=\"host\" " + this.collabDockerName
     			  + " bash -c \"s3cmd put /collab/upload/logs/* " + this.collabLogBucket + " --secret_key=" + this.collabLogSecret + " --access_key=" + this.collabLogKey + "\" \n"
     			  );
+*/
     	  S3job.getCommand().addArgument("sudo mv logs ../logs.uploaded \n");
     	  index += 1;
       }
