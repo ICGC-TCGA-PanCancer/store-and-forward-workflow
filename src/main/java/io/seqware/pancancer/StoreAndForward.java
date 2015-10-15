@@ -32,7 +32,7 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     // JSON Configuration
     private String JSONrepo = null;
     private String JSONlocation = "/datastore/gitroot";
-    private String JSONrepoName = "s3-transfer-operations";
+    private String JSONrepoName = "s3-transfer-operations";		// git project name
     private String JSONfolderName = null;
     private String JSONfileName = null;
     private String JSONxmlHash = null;
@@ -103,6 +103,9 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
             
             // JSON Git Repo
             this.JSONrepo = getProperty("JSONrepo");
+            if (hasPropertyAndNotNull("JSONrepoName")) {
+            	this.JSONrepoName = getProperty("JSONrepoName");
+            }
             this.JSONfolderName = getProperty("JSONfolderName");
             this.JSONfileName = getProperty("JSONfileName");
             this.JSONxmlHash = getProperty("JSONxmlHash");
@@ -348,13 +351,11 @@ public class StoreAndForward extends AbstractWorkflowDataModel {
     	  S3job.getCommand().addArgument("fail=$? \n");
     	  S3job.getCommand().addArgument("echo \"Received a $fail exit code from the upload container.\" \n");
     	  S3job.getCommand().addArgument("for x in logs/*; do sudo mv $x \"logs/" + this.analysisIds.get(index) + "_$(date +%s | tr -d '\\n')_$(basename $x | tr -d '\\n')\"; done \n");
-/*
     	  S3job.getCommand().addArgument("docker run "
     			  + "-v `pwd`:/collab/upload "
     			  + "--net=\"host\" " + this.collabDockerName
     			  + " bash -c \"s3cmd put /collab/upload/logs/* " + this.collabLogBucket + " --secret_key=" + this.collabLogSecret + " --access_key=" + this.collabLogKey + "\" \n"
     			  );
-*/
     	  S3job.getCommand().addArgument("sudo mv logs ../logs.uploaded \n");
     	  index += 1;
       }
